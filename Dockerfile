@@ -1,5 +1,5 @@
 FROM amazoncorretto:17-alpine-jdk
-COPY build/libs/app.jar /app.jar
+COPY server/build/libs/app.jar /app.jar
 
 # Expose server port.
 ARG host_port=8080

@@ -17,9 +17,7 @@ public class JavalinFactory {
     Javalin javalin(List<WebRoutes> webRoutes) {
         Javalin javalin = Javalin.create();
 
-        for (WebRoutes webRoute : webRoutes) {
-            webRoute.registerRoutes();
-        }
+        javalin.routes(() -> webRoutes.forEach(WebRoutes::registerRoutes));
 
         return javalin;
     }

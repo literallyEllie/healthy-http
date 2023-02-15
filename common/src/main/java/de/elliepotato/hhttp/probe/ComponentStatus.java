@@ -1,6 +1,5 @@
 package de.elliepotato.hhttp.probe;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -9,12 +8,9 @@ import java.util.Map;
 /**
  * Represents the state of a component, and its subcomponents.
  */
-public class ComponentStatus {
-
-    private ComponentState state;
-    private boolean critical;
-    private @Nullable Map<String, String> details;
-    private @Nullable Map<String, ComponentStatus> subComponents;
+public record ComponentStatus(
+        ComponentState state, @Nullable Boolean critical, @Nullable Map<String, String> details, @Nullable Map<String, ComponentStatus> subComponents
+) {
 
     public static Builder builder() {
         return new Builder();
@@ -29,16 +25,10 @@ public class ComponentStatus {
     }
 
     public ComponentStatus(
-            ComponentState state, boolean critical,
+            ComponentState state,
             @Nullable Map<String, String> details, @Nullable Map<String, ComponentStatus> subComponents
     ) {
-        this.state = state;
-        this.critical = critical;
-        this.details = details;
-        this.subComponents = subComponents;
-    }
-
-    public ComponentStatus() {
+        this(state, null, details, subComponents);
     }
 
     public static class Builder {
@@ -100,23 +90,8 @@ public class ComponentStatus {
 
     }
 
-    @NotNull
-    public ComponentState getState() {
-        return state;
-    }
-
     public boolean isCritical() {
-        return critical;
-    }
-
-    @Nullable
-    public Map<String, String> getDetails() {
-        return details;
-    }
-
-    @Nullable
-    public Map<String, ComponentStatus> getSubComponents() {
-        return subComponents;
+        return critical != null && critical;
     }
 
     @Override

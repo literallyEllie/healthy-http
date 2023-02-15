@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class HealthController {
      * This probes all the components asynchronously,
      * then returns the response.
      * </br>
-     * The http code will reflect the {@link HealthProbeResponse#getMasterState()},
+     * The http code will reflect the {@link HealthProbeResponse#masterState()},
      * where UP is 200 OK, and DOWN is 503 Service Unavailable.
      * </br>
      * If there is an error probing a component, it will be marked as DOWN,
@@ -77,7 +76,7 @@ public class HealthController {
                         }
 
                         // reflect in http status.
-                        if (status.getState() == ComponentState.DOWN && status.isCritical()) {
+                        if (status.state() == ComponentState.DOWN && status.isCritical()) {
                             ctx.status(HttpStatus.SERVICE_UNAVAILABLE);
                         }
 
@@ -89,11 +88,35 @@ public class HealthController {
     }
 
     /**
+     * Query liveness for the service.
+     * </br>
+     * This is just the {@link HealthController#probe(Context)}},
+     * but reduced to a primitive status report with a single
+     * component "liveness", reflecting the master state of all other components.
+     *
+     * @param ctx Request context.
+     * @return Health response.
+     * @see HealthController#liveness(Context)
+     */
+    @Get("/liveness")
+    @NotNull
+    public CompletableFuture<HealthProbeResponse> liveness(Context ctx) {
+        return probe(ctx).thenApply(healthProbeResponse -> {
+            ComponentState state = healthProbeResponse.masterState();
+
+            return new HealthProbeResponse(
+                    state,
+                    Map.of("liveness", ComponentStatus.builder().status(state).build())
+            );
+        });
+    }
+
+    /**
      * Health probe provider for a component in a service.
      * </br>
      * If there is no such probe, it will return an error and a 404 Not Found.
      * </br>
-     * Otherwise, the http code will reflect the {@link ComponentStatus#getState()}},
+     * Otherwise, the http code will reflect the {@link ComponentStatus#state()}},
      * where UP is 200 OK, and DOWN is 503 Service Unavailable.
      * </br>
      * If there is an error probing the component, it will be marked as DOWN,
@@ -118,38 +141,14 @@ public class HealthController {
                 .thenApply(status -> {
 
                     // reflect in http status
-                    if (status.getState() == ComponentState.UP) {
+                    if (status.state() == ComponentState.UP) {
                         ctx.status(HttpStatus.OK);
-                    } else if (status.getState() == ComponentState.DOWN) {
+                    } else if (status.state() == ComponentState.DOWN) {
                         ctx.status(HttpStatus.SERVICE_UNAVAILABLE);
                     }
 
                     return status;
                 });
-    }
-
-    /**
-     * Query liveness for the service.
-     * </br>
-     * This is just the {@link HealthController#probe(Context)}},
-     * but reduced to a primitive status report with a single
-     * component "liveness", reflecting the master state of all other components.
-     *
-     * @param ctx Request context.
-     * @return Health response.
-     * @see HealthController#liveness(Context)
-     */
-    @Get("/liveness")
-    @NotNull
-    public CompletableFuture<HealthProbeResponse> liveness(Context ctx) {
-        return probe(ctx).thenApply(healthProbeResponse -> {
-            ComponentState state = healthProbeResponse.getMasterState();
-
-            return new HealthProbeResponse(
-                    state,
-                    Map.of("liveness", ComponentStatus.builder().status(state).build())
-            );
-        });
     }
 
 }

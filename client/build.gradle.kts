@@ -3,10 +3,9 @@ plugins {
 }
 
 group = "de.elliepotato"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 dependencies {
-    implementation(project(":"))
     implementation(project(":common"))
 
     // web client

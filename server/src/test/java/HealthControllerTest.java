@@ -29,7 +29,7 @@ public class HealthControllerTest {
         HealthProbeResponse allProbe = controller.probe(ctx).get();
         HealthProbeResponse liveness = controller.liveness(ctx).get();
 
-        Assertions.assertEquals(allProbe.getMasterState(), liveness.getMasterState());
+        Assertions.assertEquals(allProbe.masterState(), liveness.masterState());
     }
 
     @Test

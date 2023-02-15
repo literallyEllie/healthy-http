@@ -20,7 +20,7 @@ public class ComponentStatusTest {
                 ComponentStatus.builder()
                         .status(ComponentState.UP)
                         .subComponent("aFailedComponent", failedComponent)
-                        .build().getState()
+                        .build().state()
         );
 
         // Infer down because failed critical component
@@ -29,7 +29,7 @@ public class ComponentStatusTest {
                 ComponentStatus.builder()
                         .subComponent("anOkCriticalComponent", okCriticalComponent)
                         .subComponent("aFailedCriticalComponent", failedCriticalComponent)
-                        .build().getState()
+                        .build().state()
         );
 
         // Infer up even if failed
@@ -38,7 +38,7 @@ public class ComponentStatusTest {
                 ComponentStatus.builder()
                         .subComponent("anOkComponent", okComponent)
                         .subComponent("aFailedComponent", failedComponent)
-                        .build().getState()
+                        .build().state()
         );
     }
 

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "de.elliepotato"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 subprojects {
     apply(plugin = "java")
@@ -16,6 +16,11 @@ subprojects {
     dependencies {
         // http
         implementation("io.avaje:avaje-http-api:1.27")
+        implementation("io.avaje:avaje-config:2.4")
+
+        // json serialization
+        implementation("io.avaje:avaje-jsonb:1.2")
+        annotationProcessor("io.avaje:avaje-jsonb-generator:1.2")
 
         // https://mvnrepository.com/artifact/org.jetbrains/annotations
         implementation("org.jetbrains:annotations:24.0.0")

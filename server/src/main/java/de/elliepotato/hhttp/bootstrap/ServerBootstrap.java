@@ -8,7 +8,7 @@ import io.javalin.Javalin;
 /**
  * Starts the http server.
  */
-@InjectModule(requires = WebRoutes.class)
+//@InjectModule(requires = WebRoutes.class)
 public final class ServerBootstrap {
 
     public static void run() {

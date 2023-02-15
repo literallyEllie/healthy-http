@@ -10,5 +10,5 @@ dependencies {
     implementation(project(":common"))
 
     // web client
-    implementation("io.avaje:avaje-config:1.2.6")
+    implementation("io.avaje:avaje-http-client:1.27")
 }

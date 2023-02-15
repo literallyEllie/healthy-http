@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "de.elliepotato"
@@ -20,4 +21,21 @@ dependencies {
     // Logging
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
     implementation("org.slf4j:slf4j-simple:2.0.6")
+}
+
+
+tasks {
+    shadowJar {
+        archiveFileName.set("app.jar")
+        mergeServiceFiles()
+        manifest {
+            attributes(mapOf("Main-Class" to "de.elliepotato.hhttp.Main"))
+        }
+    }
+}
+
+tasks {
+    build {
+        dependsOn(shadowJar)
+    }
 }

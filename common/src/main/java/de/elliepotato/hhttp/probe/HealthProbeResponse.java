@@ -50,4 +50,11 @@ public class HealthProbeResponse {
         return components;
     }
 
+    @Override
+    public String toString() {
+        return "HealthProbeResponse{" +
+                "state=" + state +
+                ", components=" + components +
+                '}';
+    }
 }

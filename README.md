@@ -70,5 +70,21 @@ Response codes:
 }
 ```
 
+#### GET /health/liveness
+This returns a short version of `/health/`, with a single component
+`liveness` to briefly describe the state of the service.
+
+**Example Response**
+```json
+{
+  "state": "UP",
+  "components": {
+    "liveness": {
+      "state": "UP"
+    }
+  }
+}
+```
+
 ## Client
 soonTM

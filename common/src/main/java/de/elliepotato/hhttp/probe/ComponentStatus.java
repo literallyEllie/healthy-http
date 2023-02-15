@@ -119,4 +119,13 @@ public class ComponentStatus {
         return subComponents;
     }
 
+    @Override
+    public String toString() {
+        return "ComponentStatus{" +
+                "state=" + state +
+                ", critical=" + critical +
+                ", details=" + details +
+                ", subComponents=" + subComponents +
+                '}';
+    }
 }

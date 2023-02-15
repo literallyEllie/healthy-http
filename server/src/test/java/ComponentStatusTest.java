@@ -3,13 +3,8 @@ import de.elliepotato.hhttp.probe.ComponentStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 public class ComponentStatusTest {
 
-    private List<MockComponentStatus> parent = List.of(
-            new MockComponentStatus("mysql", true, null)
-    );
     private final ComponentStatus okComponent = ComponentStatus.up().build();
     private final ComponentStatus okCriticalComponent = ComponentStatus.up().critical().build();
     private final ComponentStatus failedComponent = ComponentStatus.down("null").build();

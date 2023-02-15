@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,38 +56,35 @@ public class HealthController {
     @Get
     @NotNull
     public CompletableFuture<HealthProbeResponse> probe(Context ctx) {
-        // TODO refractor
-        Map<String, ComponentStatus> statuses = new HashMap<>();
-        CompletableFuture<?>[] futures = new CompletableFuture[probes.size()];
+        Map<String, CompletableFuture<ComponentStatus>> futureStatuses = probes.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, o -> o.getValue().probe()));
 
-        int index = 0;
-        for (Map.Entry<String, ComponentProbe> entry : probes.entrySet()) {
-            String id = entry.getKey();
-            ComponentProbe component = entry.getValue();
-
-            futures[index++] = component.probe()
-                    .exceptionally(throwable -> {
-                        LOGGER.error("failed to probe {}", id);
-                        throwable.printStackTrace();
-
-                        return ComponentStatus.down(throwable.getMessage())
-                                .critical(component.critical()).build();
-                    }).thenAccept(status -> statuses.put(id, status));
-        }
-
-
-        return CompletableFuture.allOf(futures)
+        return CompletableFuture.allOf(futureStatuses.values().toArray(new CompletableFuture[0]))
                 .thenApply(unused -> {
-                    HealthProbeResponse response = new HealthProbeResponse(statuses);
+                    Map<String, ComponentStatus> statuses = new HashMap<>(futureStatuses.size());
 
-                    // reflect in http status
-                    if (response.getMasterState() == ComponentState.UP) {
-                        ctx.status(HttpStatus.OK);
-                    } else if (response.getMasterState() == ComponentState.DOWN) {
-                        ctx.status(HttpStatus.SERVICE_UNAVAILABLE);
-                    }
+                    futureStatuses.forEach((key, future) -> {
+                        ComponentStatus status;
 
-                    return response;
+                        try {
+                            status = future.join();
+                        } catch (Throwable e) {
+                            LOGGER.error("failed to probe {}", key);
+                            e.printStackTrace();
+
+                            status = ComponentStatus.down(e.getMessage())
+                                    .critical(probes.get(key).critical()).build();
+                        }
+
+                        // reflect in http status.
+                        if (status.getState() == ComponentState.DOWN && status.isCritical()) {
+                            ctx.status(HttpStatus.SERVICE_UNAVAILABLE);
+                        }
+
+                        statuses.put(key, status);
+                    });
+
+                    return new HealthProbeResponse(statuses);
                 });
     }
 
@@ -128,6 +126,30 @@ public class HealthController {
 
                     return status;
                 });
+    }
+
+    /**
+     * Query liveness for the service.
+     * </br>
+     * This is just the {@link HealthController#probe(Context)}},
+     * but reduced to a primitive status report with a single
+     * component "liveness", reflecting the master state of all other components.
+     *
+     * @param ctx Request context.
+     * @return Health response.
+     * @see HealthController#liveness(Context)
+     */
+    @Get("/liveness")
+    @NotNull
+    public CompletableFuture<HealthProbeResponse> liveness(Context ctx) {
+        return probe(ctx).thenApply(healthProbeResponse -> {
+            ComponentState state = healthProbeResponse.getMasterState();
+
+            return new HealthProbeResponse(
+                    state,
+                    Map.of("liveness", ComponentStatus.builder().status(state).build())
+            );
+        });
     }
 
 }

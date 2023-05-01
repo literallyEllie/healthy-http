@@ -1,6 +1,5 @@
 package de.elliepotato.hhttp.probe;
 
-import io.avaje.jsonb.Json;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 /**
  * Overall health response of a service.
  */
-@Json
 public record HealthProbeResponse(ComponentState state, @Nullable Map<String, ComponentStatus> components) {
 
     public HealthProbeResponse(ComponentState state, @Nullable Map<String, ComponentStatus> components) {

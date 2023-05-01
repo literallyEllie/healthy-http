@@ -18,9 +18,8 @@ subprojects {
         implementation("io.avaje:avaje-http-api:1.39")
         implementation("io.avaje:avaje-config:3.2")
 
-        // json serialization
-        implementation("io.avaje:avaje-jsonb:1.5-RC1")
-        annotationProcessor("io.avaje:avaje-jsonb-generator:1.5-RC1")
+        // https://mvnrepository.com/artifact/com.google.code.gson/gson
+        implementation("com.google.code.gson:gson:2.10.1")
 
         // https://mvnrepository.com/artifact/org.jetbrains/annotations
         implementation("org.jetbrains:annotations:24.0.1")

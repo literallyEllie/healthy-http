@@ -1,8 +1,7 @@
 package de.elliepotato.hhttp.config;
 
+import com.google.gson.Gson;
 import de.elliepotato.hhttp.bootstrap.ServerCustomizer;
-import io.avaje.jsonb.JsonType;
-import io.avaje.jsonb.Jsonb;
 import io.javalin.Javalin;
 import io.javalin.config.PluginConfig;
 import io.javalin.json.JsonMapper;
@@ -16,11 +15,11 @@ import java.lang.reflect.Type;
 @Singleton
 public class DefaultServerCustomizer implements ServerCustomizer {
 
-    private final Jsonb jsonb;
+    private final Gson gson;
 
     @Inject
-    public DefaultServerCustomizer(Jsonb jsonb) {
-        this.jsonb = jsonb;
+    public DefaultServerCustomizer(Gson gson) {
+        this.gson = gson;
     }
 
     @Override
@@ -31,14 +30,13 @@ public class DefaultServerCustomizer implements ServerCustomizer {
                 @NotNull
                 @Override
                 public <T> T fromJsonString(@NotNull String json, @NotNull Type targetType) {
-                    JsonType<T> type = jsonb.type(targetType);
-                    return type.fromJson(json);
+                    return gson.fromJson(json, targetType);
                 }
 
                 @NotNull
                 @Override
                 public String toJsonString(@NotNull Object obj, @NotNull Type type) {
-                    return jsonb.type(type).toJson(obj);
+                    return gson.toJson(obj, type);
                 }
             });
 

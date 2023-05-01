@@ -32,10 +32,7 @@ public class HealthController {
     @Inject
     public HealthController(List<ComponentProbe> probes) {
         this.probes = probes.stream()
-                .collect(Collectors.toMap(
-                        componentProbe -> componentProbe.id().toLowerCase(),
-                        Function.identity())
-                );
+                .collect(Collectors.toMap(componentProbe -> componentProbe.id().toLowerCase(), Function.identity()));
     }
 
     /**

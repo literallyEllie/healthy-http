@@ -15,15 +15,15 @@ subprojects {
 
     dependencies {
         // http
-        implementation("io.avaje:avaje-http-api:1.27")
-        implementation("io.avaje:avaje-config:2.4")
+        implementation("io.avaje:avaje-http-api:1.39")
+        implementation("io.avaje:avaje-config:3.2")
 
         // json serialization
-        implementation("io.avaje:avaje-jsonb:1.2")
-        annotationProcessor("io.avaje:avaje-jsonb-generator:1.2")
+        implementation("io.avaje:avaje-jsonb:1.5-RC1")
+        annotationProcessor("io.avaje:avaje-jsonb-generator:1.5-RC1")
 
         // https://mvnrepository.com/artifact/org.jetbrains/annotations
-        implementation("org.jetbrains:annotations:24.0.0")
+        implementation("org.jetbrains:annotations:24.0.1")
 
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
         testImplementation("org.mockito:mockito-core:5.1.1")

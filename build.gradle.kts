@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    `java-library`
 }
 
 group = "de.elliepotato"
@@ -7,6 +8,8 @@ version = "1.0.0-SNAPSHOT"
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "java-library")
+    apply(plugin = "maven-publish")
 
     repositories {
         mavenLocal()
@@ -16,7 +19,7 @@ subprojects {
     dependencies {
         // http
         implementation("io.avaje:avaje-http-api:1.39")
-        implementation("io.avaje:avaje-config:3.2")
+        api("io.avaje:avaje-config:3.2")
 
         // https://mvnrepository.com/artifact/com.google.code.gson/gson
         implementation("com.google.code.gson:gson:2.10.1")
